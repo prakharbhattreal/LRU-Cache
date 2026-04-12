@@ -1,4 +1,4 @@
-# LRU Cache Implementation (Without TTL)
+# LRU Cache Implementation
 
 ## 📌 Project Overview
 This project implements a **Least Recently Used (LRU) Cache** using efficient data structures.  
