@@ -59,6 +59,9 @@ This implementation is designed to achieve **O(1) time complexity** for both ins
 5. LRU element is removed when needed
 
 ---
+## Architecture
+![LRU Architecture](images/image.png)
+---
 
 ## ⏱️ Time Complexity
 | Operation | Complexity |
