@@ -15,10 +15,10 @@ class SieveCache {
 public:
     SieveCache(int cap) {
         capacity = cap;
+        hand = cache.end(); // Represents NULL initially
     }
 
     void access(int key) {
-
         // HIT
         if (mp.count(key)) {
             mp[key].second = true;
@@ -33,43 +33,60 @@ public:
             evict();
         }
 
+        // Insert new item at the head
         cache.push_front(key);
         mp[key] = {cache.begin(), false};
-
-        if (cache.size() == 1)
-            hand = cache.begin();
     }
 
     void evict() {
+        auto obj = hand;
+        
+        // If hand is NULL (or at end), start at the tail
+        if (obj == cache.end()) {
+            obj = --cache.end(); 
+        }
+
         while (true) {
+            // Found victim
+            if (mp[*obj].second == false) {
+                cout << "Evict: " << *obj << "\n";
 
-            if (mp[*hand].second == false) {
-                cout << "Evict: " << *hand << endl;
+                // Move hand to the object just before the victim (towards head)
+                if (obj == cache.begin()) {
+                    hand = --cache.end(); // wrap around to tail
+                } else {
+                    hand = std::prev(obj);
+                }
 
-                mp.erase(*hand);
-                hand = cache.erase(hand);
-
-                if (hand == cache.end())
-                    hand = cache.begin();
-
+                mp.erase(*obj);
+                cache.erase(obj);
                 break;
             }
 
-            // second chance
-            mp[*hand].second = false;
+            // Second chance: Reset visited bit to 0
+            mp[*obj].second = false;
 
-            ++hand;
-            if (hand == cache.end())
-                hand = cache.begin();
+            // Move towards the head
+            if (obj == cache.begin()) {
+                obj = --cache.end(); // wrap around to tail
+            } else {
+                --obj; 
+            }
         }
     }
 
     void display() {
-        cout << "Cache: ";
+        cout << "Cache (Head -> Tail): ";
         for (int x : cache) {
-            cout << x << "(" << mp[x].second << ") ";
+            cout << x << "[" << mp[x].second << "] ";
         }
-        cout << endl;
+        
+        if (hand != cache.end()) {
+            cout << " | Hand is pointing at: " << *hand;
+        } else {
+            cout << " | Hand is NULL";
+        }
+        cout << "\n";
     }
 };
 
